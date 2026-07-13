@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { WelcomeStep } from '@/components/survey/WelcomeStep'
 import { TextQuestionStep } from '@/components/survey/TextQuestionStep'
 import { RankingStep } from '@/components/survey/RankingStep'
@@ -6,6 +6,7 @@ import { ThankYouStep } from '@/components/survey/ThankYouStep'
 import { submitSurveyToDatabase, type SurveyResponse } from '@/lib/mock-api'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { AlertCircle } from 'lucide-react'
 
 const QUESTIONS = [
   'Voltando ao começo: o que estava acontecendo na sua vida, na sua família ou no seu momento patrimonial que fez esse projeto sair do desejo e virar prioridade?',
@@ -129,8 +130,27 @@ export default function Index() {
     return null
   }
 
+  useEffect(() => {
+    const hasData = Object.values(answers).some((v) => (Array.isArray(v) ? v.length > 0 : !!v))
+    if (!hasData) return
+
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault()
+      e.returnValue = ''
+    }
+    window.addEventListener('beforeunload', handler)
+    return () => window.removeEventListener('beforeunload', handler)
+  }, [answers])
+
   return (
     <div className="w-full max-w-3xl flex flex-col items-center">
+      {!isIntro && !isOutro && (
+        <div className="w-full mb-3 flex items-center justify-center gap-2 text-xs text-white/40 font-light">
+          <AlertCircle className="w-3 h-3 shrink-0" />
+          <span>As respostas são salvas localmente e serão perdidas ao recarregar a página.</span>
+        </div>
+      )}
+
       {!isIntro && !isOutro && (
         <div className="w-full mb-8">
           <div className="flex justify-between text-xs text-brand-tan/80 mb-2 font-medium tracking-widest uppercase">

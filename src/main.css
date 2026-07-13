@@ -64,4 +64,18 @@
   .text-glow {
     text-shadow: 0 0 20px rgba(166, 144, 115, 0.3);
   }
+
+  .listening-pulse {
+    animation: listening-pulse-anim 1.5s ease-in-out infinite;
+  }
+
+  @keyframes listening-pulse-anim {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(166, 144, 115, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 0 12px rgba(166, 144, 115, 0);
+    }
+  }
 }
