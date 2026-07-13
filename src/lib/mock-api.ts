@@ -1,3 +1,5 @@
+import { submitSurveyResponses } from '@/services/survey-responses'
+
 export interface SurveyResponse {
   q1: string
   q2: string
@@ -13,10 +15,9 @@ export interface SurveyResponse {
 }
 
 export async function submitSurveyToDatabase(data: SurveyResponse): Promise<{ success: boolean }> {
-  return new Promise((resolve) => {
-    console.log('Saving to Supabase `client_responses` table...', data)
-    setTimeout(() => {
-      resolve({ success: true })
-    }, 1200)
-  })
+  const result = await submitSurveyResponses(data)
+  if (!result.success) {
+    throw new Error(result.error || 'Erro ao salvar respostas')
+  }
+  return { success: true }
 }
