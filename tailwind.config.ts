@@ -26,19 +26,14 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        serif: ['"Playfair Display"', 'serif'],
+        sans: ['Satoshi', 'sans-serif'],
+        serif: ['Satoshi', 'sans-serif'],
       },
       colors: {
-        gold: {
-          400: '#D4B872',
-          500: '#C5A059',
-          600: '#B08D4C',
-        },
-        charcoal: {
-          900: '#0A0A0A',
-          800: '#1A1A1A',
-          700: '#2A2A2A',
+        brand: {
+          blue: '#13273F',
+          beige: '#EFDDCB',
+          tan: '#A69073',
         },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

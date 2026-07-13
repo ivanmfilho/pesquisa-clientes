@@ -32,11 +32,11 @@ export function TextQuestionStep({
 
   return (
     <div className="glass-panel p-6 md:p-10 rounded-2xl flex flex-col min-h-[400px]">
-      <span className="text-gold-500 font-serif text-xl italic mb-4 block">
+      <span className="text-brand-tan font-medium text-lg mb-4 block">
         Pergunta 0{questionNumber}
       </span>
 
-      <h2 className="text-2xl md:text-3xl mb-8 leading-snug font-medium text-white/90">
+      <h2 className="text-2xl md:text-3xl mb-8 leading-snug font-medium text-brand-beige">
         {questionText}
       </h2>
 
@@ -46,7 +46,7 @@ export function TextQuestionStep({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="Sua resposta com o máximo de detalhes possível..."
-          className="flex-1 min-h-[160px] resize-none bg-white/5 border-white/10 text-white placeholder:text-white/30 text-lg md:text-xl p-6 rounded-xl focus-visible:ring-gold-500/50 focus-visible:border-gold-500/50 transition-all leading-relaxed"
+          className="flex-1 min-h-[160px] resize-none bg-white/5 border-white/10 text-white placeholder:text-white/30 text-lg md:text-xl p-6 rounded-xl focus-visible:ring-brand-tan/50 focus-visible:border-brand-tan/50 transition-all leading-relaxed"
         />
       </div>
 
@@ -54,7 +54,7 @@ export function TextQuestionStep({
         <Button
           variant="ghost"
           onClick={onPrev}
-          className="text-white/60 hover:text-white hover:bg-white/5"
+          className="text-white/60 hover:text-brand-beige hover:bg-white/5"
         >
           <ArrowLeft className="mr-2 w-4 h-4" />
           Voltar
@@ -63,7 +63,7 @@ export function TextQuestionStep({
         <Button
           onClick={onNext}
           disabled={!isEnabled}
-          className="bg-gold-600 hover:bg-gold-500 text-white rounded-full px-8 disabled:opacity-50 disabled:hover:scale-100 transition-all hover:scale-105 group"
+          className="bg-brand-tan hover:bg-brand-beige text-brand-blue font-semibold rounded-full px-8 disabled:opacity-50 disabled:hover:scale-100 transition-all hover:scale-105 group"
         >
           Próxima
           <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />

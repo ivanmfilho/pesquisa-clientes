@@ -133,7 +133,7 @@ export default function Index() {
     <div className="w-full max-w-3xl flex flex-col items-center">
       {!isIntro && !isOutro && (
         <div className="w-full mb-8">
-          <div className="flex justify-between text-xs text-gold-500/70 mb-2 font-medium tracking-widest uppercase">
+          <div className="flex justify-between text-xs text-brand-tan/80 mb-2 font-medium tracking-widest uppercase">
             <span>Progresso</span>
             <span>
               {step} de {totalSteps}
@@ -141,7 +141,7 @@ export default function Index() {
           </div>
           <div className="h-[2px] w-full bg-white/10 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gold-500 transition-all duration-500 ease-out"
+              className="h-full bg-brand-tan transition-all duration-500 ease-out"
               style={{ width: `${(step / totalSteps) * 100}%` }}
             />
           </div>

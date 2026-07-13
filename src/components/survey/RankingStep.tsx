@@ -46,9 +46,9 @@ export function RankingStep({
 
   return (
     <div className="glass-panel p-6 md:p-10 rounded-2xl flex flex-col">
-      <span className="text-gold-500 font-serif text-xl italic mb-4 block">Pergunta 10</span>
+      <span className="text-brand-tan font-medium text-lg mb-4 block">Pergunta 10</span>
 
-      <h2 className="text-2xl md:text-3xl mb-4 leading-snug font-medium text-white/90">
+      <h2 className="text-2xl md:text-3xl mb-4 leading-snug font-medium text-brand-beige">
         Desses fatores abaixo, escolha os 3 que mais pesaram na sua decisão e coloque em ordem de
         importância.
       </h2>
@@ -72,7 +72,7 @@ export function RankingStep({
               className={cn(
                 'relative p-4 rounded-xl text-left transition-all duration-300 border flex items-center justify-between group',
                 isSelected
-                  ? 'bg-gold-500/20 border-gold-500 text-white shadow-[0_0_15px_rgba(197,160,89,0.2)]'
+                  ? 'bg-brand-tan/20 border-brand-tan text-white shadow-[0_0_15px_rgba(166,144,115,0.2)]'
                   : 'bg-white/5 border-white/10 text-white/80 hover:bg-white/10 hover:border-white/20',
                 isDisabled &&
                   'opacity-40 cursor-not-allowed hover:bg-white/5 hover:border-white/10',
@@ -81,7 +81,7 @@ export function RankingStep({
               <span className="text-sm md:text-base font-medium pr-8 leading-tight">{option}</span>
 
               {isSelected && (
-                <div className="absolute right-4 w-6 h-6 rounded-full bg-gold-500 text-charcoal-900 flex items-center justify-center text-sm font-bold animate-fade-in">
+                <div className="absolute right-4 w-6 h-6 rounded-full bg-brand-tan text-brand-blue flex items-center justify-center text-sm font-bold animate-fade-in">
                   {index + 1}
                 </div>
               )}
@@ -94,7 +94,7 @@ export function RankingStep({
         <Button
           variant="ghost"
           onClick={onPrev}
-          className="text-white/60 hover:text-white hover:bg-white/5"
+          className="text-white/60 hover:text-brand-beige hover:bg-white/5"
           disabled={isSubmitting}
         >
           <ArrowLeft className="mr-2 w-4 h-4" />
@@ -104,7 +104,7 @@ export function RankingStep({
         <Button
           onClick={onNext}
           disabled={!isComplete || isSubmitting}
-          className="bg-gold-600 hover:bg-gold-500 text-white rounded-full px-8 disabled:opacity-50 disabled:hover:scale-100 transition-all hover:scale-105"
+          className="bg-brand-tan hover:bg-brand-beige text-brand-blue font-semibold rounded-full px-8 disabled:opacity-50 disabled:hover:scale-100 transition-all hover:scale-105"
         >
           {isSubmitting ? (
             <>
