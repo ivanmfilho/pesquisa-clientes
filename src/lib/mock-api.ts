@@ -1,6 +1,8 @@
 import { submitSurveyResponses } from '@/services/survey-responses'
+import { supabase } from '@/lib/supabase/client'
 
 export interface SurveyResponse {
+  name: string
   q1: string
   q2: string
   q3: string
@@ -16,8 +18,20 @@ export interface SurveyResponse {
 
 export async function submitSurveyToDatabase(data: SurveyResponse): Promise<{ success: boolean }> {
   const result = await submitSurveyResponses(data)
-  if (!result.success) {
-    throw new Error(result.error || 'Erro ao salvar respostas')
+
+  if (result.success && result.sessionId) {
+    try {
+      await supabase.functions.invoke('notify-survey-response', {
+        body: {
+          name: data.name,
+          sessionId: result.sessionId,
+          completedAt: data.completedAt,
+        },
+      })
+    } catch {
+      // Notification failure should not block the user experience
+    }
   }
-  return { success: true }
+
+  return { success: result.success }
 }

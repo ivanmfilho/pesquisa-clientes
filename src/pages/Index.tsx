@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
-import { WelcomeStep } from '@/components/survey/WelcomeStep'
+import { StartStep } from '@/components/survey/StartStep'
 import { TextQuestionStep } from '@/components/survey/TextQuestionStep'
 import { RankingStep } from '@/components/survey/RankingStep'
 import { ThankYouStep } from '@/components/survey/ThankYouStep'
 import { submitSurveyToDatabase, type SurveyResponse } from '@/lib/mock-api'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
-import { AlertCircle } from 'lucide-react'
 
 const QUESTIONS = [
   'Voltando ao começo: o que estava acontecendo na sua vida, na sua família ou no seu momento patrimonial que fez esse projeto sair do desejo e virar prioridade?',
@@ -26,12 +25,18 @@ export default function Index() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const [answers, setAnswers] = useState<Partial<SurveyResponse>>({
+    name: '',
     q10: [],
   })
 
   const totalSteps = QUESTIONS.length + 1
   const isIntro = step === 0
-  const isOutro = step === totalSteps + 1
+  const isOutro = step > totalSteps
+
+  const handleStart = () => {
+    setDirection('forward')
+    setStep(1)
+  }
 
   const handleNext = () => {
     setDirection('forward')
@@ -41,6 +46,10 @@ export default function Index() {
   const handlePrev = () => {
     setDirection('backward')
     setStep((s) => s - 1)
+  }
+
+  const handleNameAnswer = (value: string) => {
+    setAnswers((prev) => ({ ...prev, name: value }))
   }
 
   const handleTextAnswer = (qIndex: number, value: string) => {
@@ -55,6 +64,7 @@ export default function Index() {
     setIsSubmitting(true)
     try {
       const finalData: SurveyResponse = {
+        name: answers.name || '',
         q1: answers.q1 || '',
         q2: answers.q2 || '',
         q3: answers.q3 || '',
@@ -83,8 +93,8 @@ export default function Index() {
 
     if (step === 0) {
       return (
-        <div key="step-0" className={cn('w-full', animationClass)}>
-          <WelcomeStep onStart={handleNext} />
+        <div key="step-start" className={cn('w-full', animationClass)}>
+          <StartStep value={answers.name || ''} onChange={handleNameAnswer} onStart={handleStart} />
         </div>
       )
     }
@@ -145,14 +155,7 @@ export default function Index() {
   return (
     <div className="w-full max-w-3xl flex flex-col items-center">
       {!isIntro && !isOutro && (
-        <div className="w-full mb-3 flex items-center justify-center gap-2 text-xs text-white/40 font-light">
-          <AlertCircle className="w-3 h-3 shrink-0" />
-          <span>As respostas são salvas localmente e serão perdidas ao recarregar a página.</span>
-        </div>
-      )}
-
-      {!isIntro && !isOutro && (
-        <div className="w-full mb-8">
+        <div className="w-full mb-6 md:mb-8">
           <div className="flex justify-between text-xs text-brand-tan/80 mb-2 font-medium tracking-widest uppercase">
             <span>Progresso</span>
             <span>

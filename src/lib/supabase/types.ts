@@ -9,7 +9,33 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      survey_responses: {
+        Row: {
+          answer_text: string
+          created_at: string
+          id: string
+          question_label: string
+          session_id: string
+          user_id: string | null
+        }
+        Insert: {
+          answer_text?: string
+          created_at?: string
+          id?: string
+          question_label: string
+          session_id: string
+          user_id?: string | null
+        }
+        Update: {
+          answer_text?: string
+          created_at?: string
+          id?: string
+          question_label?: string
+          session_id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

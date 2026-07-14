@@ -15,7 +15,8 @@ export interface SurveySession {
   response_count: number
 }
 
-const QUESTION_LABELS: Record<string, string> = {
+export const QUESTION_LABELS: Record<string, string> = {
+  name: 'Qual é o seu nome?',
   q1: 'Momento em que o projeto virou prioridade',
   q2: 'Maior receio ao contratar',
   q3: 'Inegociável na decisão',
@@ -29,6 +30,7 @@ const QUESTION_LABELS: Record<string, string> = {
 }
 
 export async function submitSurveyResponses(data: {
+  name: string
   q1: string
   q2: string
   q3: string
@@ -40,13 +42,14 @@ export async function submitSurveyResponses(data: {
   q9: string
   q10: string[]
   completedAt: string
-}): Promise<{ success: boolean; error?: string }> {
+}): Promise<{ success: boolean; sessionId?: string; error?: string }> {
   const sessionId = crypto.randomUUID()
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
   const rows = [
+    { question_label: QUESTION_LABELS.name, answer_text: data.name },
     { question_label: QUESTION_LABELS.q1, answer_text: data.q1 },
     { question_label: QUESTION_LABELS.q2, answer_text: data.q2 },
     { question_label: QUESTION_LABELS.q3, answer_text: data.q3 },
@@ -65,7 +68,28 @@ export async function submitSurveyResponses(data: {
 
   const { error } = await supabase.from('survey_responses').insert(rows)
   if (error) return { success: false, error: error.message }
-  return { success: true }
+  return { success: true, sessionId }
+}
+
+export async function getAllResponses(filters?: {
+  startDate?: string
+  endDate?: string
+}): Promise<{ data: SurveyResponseRow[] | null; error: string | null }> {
+  let query = supabase
+    .from('survey_responses')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (filters?.startDate) {
+    query = query.gte('created_at', filters.startDate)
+  }
+  if (filters?.endDate) {
+    query = query.lte('created_at', filters.endDate)
+  }
+
+  const { data, error } = await query
+  if (error) return { data: null, error: error.message }
+  return { data: data as SurveyResponseRow[], error: null }
 }
 
 export async function getSurveySessions(): Promise<{
