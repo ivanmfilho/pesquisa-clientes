@@ -12,7 +12,7 @@ const QUESTIONS = [
   'Antes de falar com a gente, qual era o seu maior receio ao contratar uma empresa para construir uma casa desse padrão?',
   'Quando você começou a avaliar opções, o que era inegociável para você nessa decisão?',
   'Em que momento você sentiu que a nossa empresa poderia ser a escolha certa? Teve algum episódio, detalhe, conversa ou percepção que virou essa chave?',
-  'Entre tudo o que você avaliou, o que mais pesou na decisão final de fechar com a gente?',
+  'Entre tudo o que você avaliou, o que mais pesou na decisão final de fechar com Minc?',
   'Você comparou com outras empresas, profissionais ou modelos de contratação? O que você viu de diferente entre a Minc e essas alternativas? Se você tivesse que explicar para um amigo próximo por que escolheu a gente, em uma conversa franca, o que você diria?',
   'E uma opinião sua: qual perfil de pessoa você acredita que poderia apreciar melhor a nossa forma de conduzir a obra?',
   'Sobre os imprevistos de obra, como foram resolvidos? E como poderíamos ter resolvido melhor?',
