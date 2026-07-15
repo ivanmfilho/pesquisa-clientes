@@ -1,8 +1,18 @@
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { ArrowLeft, ArrowRight, Mic, MicOff, Square, AlertCircle } from 'lucide-react'
+import {
+  ArrowLeft,
+  ArrowRight,
+  Mic,
+  MicOff,
+  Square,
+  AlertCircle,
+  RotateCcw,
+  AudioLines,
+} from 'lucide-react'
 import { useEffect, useRef, useCallback } from 'react'
 import { useSpeechRecognition } from '@/hooks/use-speech-recognition'
+import { useAudioRecorder } from '@/hooks/use-audio-recorder'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -13,6 +23,14 @@ interface TextQuestionStepProps {
   onChange: (val: string) => void
   onNext: () => void
   onPrev: () => void
+  onAudioRecorded?: (blob: Blob) => void
+  existingAudioBlob?: Blob | null
+}
+
+function formatTime(seconds: number) {
+  const m = Math.floor(seconds / 60)
+  const s = seconds % 60
+  return `${m}:${s.toString().padStart(2, '0')}`
 }
 
 export function TextQuestionStep({
@@ -22,6 +40,8 @@ export function TextQuestionStep({
   onChange,
   onNext,
   onPrev,
+  onAudioRecorded,
+  existingAudioBlob,
 }: TextQuestionStepProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -33,6 +53,7 @@ export function TextQuestionStep({
   )
 
   const { isListening, isSupported, toggle, error, reset } = useSpeechRecognition(handleTranscript)
+  const recorder = useAudioRecorder(existingAudioBlob ?? null)
 
   useEffect(() => {
     if (textareaRef.current && !isListening) {
@@ -45,6 +66,12 @@ export function TextQuestionStep({
       toast.error(error)
     }
   }, [error])
+
+  useEffect(() => {
+    if (recorder.error) {
+      toast.error(recorder.error)
+    }
+  }, [recorder.error])
 
   useEffect(() => {
     return () => reset()
@@ -60,27 +87,39 @@ export function TextQuestionStep({
     toggle(value)
   }
 
+  const handleStartRecording = () => {
+    recorder.start(onAudioRecorded)
+  }
+
+  const handleReRecord = () => {
+    recorder.reset()
+    recorder.start(onAudioRecorded)
+  }
+
   return (
     <div
       className={cn(
         'glass-panel p-6 md:p-10 rounded-2xl flex flex-col min-h-[400px] transition-all duration-300',
         isListening && 'ring-2 ring-brand-tan/50 shadow-[0_0_30px_rgba(166,144,115,0.25)]',
+        recorder.isRecording && 'ring-2 ring-red-400/30',
       )}
     >
       <div className="flex items-center justify-between mb-4">
-        <span className="text-brand-tan font-medium text-lg">Pergunta 0{questionNumber}</span>
+        <span className="text-brand-tan font-medium text-lg">
+          Pergunta {questionNumber.toString().padStart(2, '0')}
+        </span>
 
         <button
           type="button"
           onClick={handleMicClick}
-          disabled={!isSupported}
-          aria-label={isListening ? 'Parar gravação' : 'Iniciar gravação por voz'}
+          disabled={!isSupported || recorder.isRecording}
+          aria-label={isListening ? 'Parar gravação' : 'Iniciar transcrição por voz'}
           className={cn(
             'relative flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300',
             isListening
               ? 'bg-red-500/20 text-red-300 border border-red-400/40'
               : 'bg-brand-tan/15 text-brand-beige border border-brand-tan/30 hover:bg-brand-tan/25',
-            !isSupported && 'opacity-50 cursor-not-allowed',
+            (!isSupported || recorder.isRecording) && 'opacity-50 cursor-not-allowed',
           )}
         >
           {isListening && (
@@ -131,11 +170,79 @@ export function TextQuestionStep({
         />
       </div>
 
-      <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/10">
+      <div className="mt-4 pt-4 border-t border-white/10">
+        <div className="flex items-center gap-2 mb-3">
+          <AudioLines className="w-4 h-4 text-brand-tan/70" />
+          <span className="text-brand-tan/70 text-sm font-medium">
+            Áudio da resposta (opcional)
+          </span>
+        </div>
+
+        {!recorder.isRecording && !recorder.audioUrl && (
+          <button
+            type="button"
+            onClick={handleStartRecording}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 hover:border-brand-tan/30 transition-all duration-300"
+          >
+            <Mic className="w-4 h-4 text-brand-tan" />
+            Gravar áudio
+          </button>
+        )}
+
+        {recorder.isRecording && (
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-500/15 border border-red-400/30">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-400" />
+              </span>
+              <span className="text-red-300 text-sm font-mono font-medium tabular-nums">
+                {formatTime(recorder.duration)}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={recorder.stop}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium bg-red-500/20 text-red-300 border border-red-400/40 hover:bg-red-500/30 transition-all duration-300"
+            >
+              <Square className="w-4 h-4 fill-current" />
+              Parar
+            </button>
+          </div>
+        )}
+
+        {!recorder.isRecording && recorder.audioUrl && (
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+            <audio
+              src={recorder.audioUrl}
+              controls
+              className="flex-1 h-10 rounded-lg"
+              style={{ filter: 'invert(0.85) hue-rotate(180deg)' }}
+            />
+            <button
+              type="button"
+              onClick={handleReRecord}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 hover:border-brand-tan/30 transition-all duration-300 whitespace-nowrap"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Regravar
+            </button>
+          </div>
+        )}
+
+        {recorder.error && (
+          <div className="flex items-center gap-2 mt-2 text-red-300/70 text-xs">
+            <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+            <span>{recorder.error}</span>
+          </div>
+        )}
+      </div>
+
+      <div className="flex items-center justify-between mt-6 pt-6 border-t border-white/10">
         <Button
           variant="ghost"
           onClick={onPrev}
-          disabled={isListening}
+          disabled={isListening || recorder.isRecording}
           className="text-white/60 hover:text-brand-beige hover:bg-white/5 disabled:opacity-40"
         >
           <ArrowLeft className="mr-2 w-4 h-4" />
@@ -144,7 +251,7 @@ export function TextQuestionStep({
 
         <Button
           onClick={onNext}
-          disabled={!isEnabled || isListening}
+          disabled={!isEnabled || isListening || recorder.isRecording}
           className="bg-brand-tan hover:bg-brand-beige text-brand-blue font-semibold rounded-full px-8 disabled:opacity-50 disabled:hover:scale-100 transition-all hover:scale-105 group"
         >
           Próxima

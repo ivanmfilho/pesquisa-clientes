@@ -5,6 +5,7 @@ export interface SurveyResponseRow {
   session_id: string
   question_label: string
   answer_text: string
+  audio_url: string | null
   created_at: string
   user_id: string | null
 }
@@ -20,13 +21,35 @@ export const QUESTION_LABELS: Record<string, string> = {
   q1: 'Momento em que o projeto virou prioridade',
   q2: 'Maior receio ao contratar',
   q3: 'Inegociável na decisão',
-  q4: 'Momento de confiança na empresa',
+  q4: 'Comparação com outras empresas',
   q5: 'O que mais pesou na decisão final',
-  q6: 'Comparação com outras empresas',
+  q6: 'O que mais marcou a experiência',
   q7: 'Perfil ideal de cliente',
   q8: 'Resolução de imprevistos',
   q9: 'O que a Minc pode melhorar',
   q10: 'Ranking dos 3 fatores mais importantes',
+}
+
+export async function uploadAudioRecording(
+  sessionId: string,
+  questionKey: string,
+  blob: Blob,
+): Promise<string | null> {
+  const ext = blob.type.includes('webm') ? 'webm' : 'ogg'
+  const filePath = `${sessionId}/${questionKey}.${ext}`
+
+  const { error } = await supabase.storage.from('survey-recordings').upload(filePath, blob, {
+    contentType: blob.type,
+    upsert: true,
+  })
+
+  if (error) {
+    console.error('Audio upload error:', error.message)
+    return null
+  }
+
+  const { data } = supabase.storage.from('survey-recordings').getPublicUrl(filePath)
+  return data.publicUrl
 }
 
 export async function submitSurveyResponses(data: {
@@ -42,31 +65,73 @@ export async function submitSurveyResponses(data: {
   q9: string
   q10: string[]
   completedAt: string
+  sessionId: string
+  audioUrls?: Record<string, string>
 }): Promise<{ success: boolean; sessionId?: string; error?: string }> {
-  const sessionId = crypto.randomUUID()
+  const sessionId = data.sessionId
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
   const rows = [
-    { question_label: QUESTION_LABELS.name, answer_text: data.name },
-    { question_label: QUESTION_LABELS.q1, answer_text: data.q1 },
-    { question_label: QUESTION_LABELS.q2, answer_text: data.q2 },
-    { question_label: QUESTION_LABELS.q3, answer_text: data.q3 },
-    { question_label: QUESTION_LABELS.q4, answer_text: data.q4 },
-    { question_label: QUESTION_LABELS.q5, answer_text: data.q5 },
-    { question_label: QUESTION_LABELS.q6, answer_text: data.q6 },
-    { question_label: QUESTION_LABELS.q7, answer_text: data.q7 },
-    { question_label: QUESTION_LABELS.q8, answer_text: data.q8 },
-    { question_label: QUESTION_LABELS.q9, answer_text: data.q9 },
-    { question_label: QUESTION_LABELS.q10, answer_text: data.q10.join(' → ') },
+    {
+      question_label: QUESTION_LABELS.name,
+      answer_text: data.name,
+      audio_url: null as string | null,
+    },
+    {
+      question_label: QUESTION_LABELS.q1,
+      answer_text: data.q1,
+      audio_url: data.audioUrls?.q1 ?? null,
+    },
+    {
+      question_label: QUESTION_LABELS.q2,
+      answer_text: data.q2,
+      audio_url: data.audioUrls?.q2 ?? null,
+    },
+    {
+      question_label: QUESTION_LABELS.q3,
+      answer_text: data.q3,
+      audio_url: data.audioUrls?.q3 ?? null,
+    },
+    {
+      question_label: QUESTION_LABELS.q4,
+      answer_text: data.q4,
+      audio_url: data.audioUrls?.q4 ?? null,
+    },
+    {
+      question_label: QUESTION_LABELS.q5,
+      answer_text: data.q5,
+      audio_url: data.audioUrls?.q5 ?? null,
+    },
+    {
+      question_label: QUESTION_LABELS.q6,
+      answer_text: data.q6,
+      audio_url: data.audioUrls?.q6 ?? null,
+    },
+    {
+      question_label: QUESTION_LABELS.q7,
+      answer_text: data.q7,
+      audio_url: data.audioUrls?.q7 ?? null,
+    },
+    {
+      question_label: QUESTION_LABELS.q8,
+      answer_text: data.q8,
+      audio_url: data.audioUrls?.q8 ?? null,
+    },
+    {
+      question_label: QUESTION_LABELS.q9,
+      answer_text: data.q9,
+      audio_url: data.audioUrls?.q9 ?? null,
+    },
+    { question_label: QUESTION_LABELS.q10, answer_text: data.q10.join(' → '), audio_url: null },
   ].map((row) => ({
     ...row,
     session_id: sessionId,
     user_id: user?.id || null,
   }))
 
-  const { error } = await supabase.from('survey_responses').insert(rows)
+  const { error } = await supabase.from('survey_responses').insert(rows as any)
   if (error) return { success: false, error: error.message }
   return { success: true, sessionId }
 }

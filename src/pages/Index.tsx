@@ -23,6 +23,7 @@ export default function Index() {
   const [step, setStep] = useState(0)
   const [direction, setDirection] = useState<'forward' | 'backward'>('forward')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [audioBlobs, setAudioBlobs] = useState<Record<string, Blob>>({})
 
   const [answers, setAnswers] = useState<Partial<SurveyResponse>>({
     name: '',
@@ -60,6 +61,10 @@ export default function Index() {
     setAnswers((prev) => ({ ...prev, q10: values }))
   }
 
+  const handleAudioRecorded = (questionKey: string, blob: Blob) => {
+    setAudioBlobs((prev) => ({ ...prev, [questionKey]: blob }))
+  }
+
   const handleSubmit = async () => {
     setIsSubmitting(true)
     try {
@@ -76,6 +81,7 @@ export default function Index() {
         q9: answers.q9 || '',
         q10: answers.q10 || [],
         completedAt: new Date().toISOString(),
+        audioBlobs,
       }
       await submitSurveyToDatabase(finalData)
       setDirection('forward')
@@ -110,6 +116,8 @@ export default function Index() {
             onChange={(val) => handleTextAnswer(qIndex, val)}
             onNext={handleNext}
             onPrev={handlePrev}
+            onAudioRecorded={(blob) => handleAudioRecorded(`q${qIndex}`, blob)}
+            existingAudioBlob={audioBlobs[`q${qIndex}`] || null}
           />
         </div>
       )
@@ -142,7 +150,7 @@ export default function Index() {
 
   useEffect(() => {
     const hasData = Object.values(answers).some((v) => (Array.isArray(v) ? v.length > 0 : !!v))
-    if (!hasData) return
+    if (!hasData && Object.keys(audioBlobs).length === 0) return
 
     const handler = (e: BeforeUnloadEvent) => {
       e.preventDefault()
@@ -150,7 +158,7 @@ export default function Index() {
     }
     window.addEventListener('beforeunload', handler)
     return () => window.removeEventListener('beforeunload', handler)
-  }, [answers])
+  }, [answers, audioBlobs])
 
   return (
     <div className="w-full max-w-3xl flex flex-col items-center">
