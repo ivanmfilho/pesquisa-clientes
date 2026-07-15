@@ -29,7 +29,8 @@ export async function submitSurveyToDatabase(data: SurveyResponse): Promise<{ su
         },
       })
     } catch {
-      // Notification failure should not block the user experience
+      // The database trigger also calls the edge function as a backup.
+      // Notification failure should not block the user experience.
     }
   }
 
