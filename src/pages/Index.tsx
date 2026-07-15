@@ -8,15 +8,15 @@ import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 
 const QUESTIONS = [
-  'Voltando ao começo: o que estava acontecendo na sua vida, na sua família ou no seu momento patrimonial que fez esse projeto sair do desejo e virar prioridade?',
-  'Antes de falar com a gente, qual era o seu maior receio ao contratar uma empresa para construir uma casa desse padrão?',
-  'Quando você começou a avaliar opções, o que era inegociável para você nessa decisão?',
-  'Em que momento você sentiu que a nossa empresa poderia ser a escolha certa? Teve algum episódio, detalhe, conversa ou percepção que virou essa chave?',
-  'Entre tudo o que você avaliou, o que mais pesou na decisão final de fechar com Minc?',
-  'Você comparou com outras empresas, profissionais ou modelos de contratação? O que você viu de diferente entre a Minc e essas alternativas? Se você tivesse que explicar para um amigo próximo por que escolheu a gente, em uma conversa franca, o que você diria?',
-  'E uma opinião sua: qual perfil de pessoa você acredita que poderia apreciar melhor a nossa forma de conduzir a obra?',
-  'Sobre os imprevistos de obra, como foram resolvidos? E como poderíamos ter resolvido melhor?',
-  'Você conhece o nosso Propósito: O Futuro precisa ser Melhor do que o Presente. O que você acha que a Minc pode ser melhor?',
+  'Voltando ao começo: o que estava acontecendo na vida de vocês, na família ou no momento patrimonial que fez esse projeto sair do desejo e virar prioridade?',
+  'Qual era o maior receio de vocês ao contratar uma empresa para construir uma casa desse padrão?',
+  'Quando vocês começaram a avaliar opções, o que era inegociável para vocês nessa decisão?',
+  'Vocês procuraram outras empresas, profissionais ou modelos de contratação? O que vocês viram de diferente entre a Minc e essas alternativas?',
+  'Entre tudo o que vocês avaliaram, o que foi mais decisivo para escolher a Minc?',
+  'Durante a jornada, o que mais marcou a experiência com a Minc?',
+  'Dentro da experiência que vocês tiveram, conhecendo os nossos diferenciais de acabamento, execução e atendimento, em sua opinião, qual é o perfil de pessoas que também podem valorizar este tipo de jornada?',
+  'Sobre os imprevistos de obra, como foram resolvidos? E o que vocês sugerem que poderíamos ter feito de diferente?',
+  'Você conhece o nosso Propósito: O Futuro precisa ser Melhor do que o Presente. Como vocês acham que a Minc poderia ser melhor?',
 ]
 
 export default function Index() {

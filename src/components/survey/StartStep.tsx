@@ -19,12 +19,16 @@ export function StartStep({ value, onChange, onStart }: StartStepProps) {
 
       <div className="space-y-3 text-white/70 md:text-base leading-relaxed font-light mb-6 text-center">
         <p>
-          Estamos refinando nossa experiência comercial para entender o que realmente pesa na
+          Estamos refinando nossa experiência comercial para entender o que realmente importa na
           decisão de quem constrói uma casa de alto padrão conosco.
         </p>
         <p>
-          São 10 perguntas rápidas. Não é pesquisa de satisfação — é uma conversa franca para
+          São 10 perguntas rápidas. Não é pesquisa de satisfação, é uma conversa franca para
           melhorarmos nosso processo.
+        </p>
+        <p>
+          Tente responder como se estivesse em uma conversa com um amigo, dizendo o que você
+          realmente pensa.
         </p>
       </div>
 
