@@ -16,7 +16,7 @@ export function ThankYouStep() {
 
       <p className="text-white/70 text-lg font-light leading-relaxed mb-10">
         Suas respostas são inestimáveis e nos ajudarão a continuar elevando o padrão de excelência
-        da Minc para você e nossos futuros clientes.
+        da Minc.
       </p>
 
       <Button

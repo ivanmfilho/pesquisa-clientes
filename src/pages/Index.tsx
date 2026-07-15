@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils'
 
 const QUESTIONS = [
   'Voltando ao começo: o que estava acontecendo na vida de vocês, na família ou no momento patrimonial que fez esse projeto sair do desejo e virar prioridade?',
-  'Qual era o maior receio de vocês ao contratar uma empresa para construir uma casa desse padrão?',
+  'Qual era o maior receio de vocês para contratar uma empresa para construir uma casa desse padrão?',
   'Quando vocês começaram a avaliar opções, o que era inegociável para vocês nessa decisão?',
   'Vocês procuraram outras empresas, profissionais ou modelos de contratação? O que vocês viram de diferente entre a Minc e essas alternativas?',
   'Entre tudo o que vocês avaliaram, o que foi mais decisivo para escolher a Minc?',
