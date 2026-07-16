@@ -77,7 +77,9 @@ export function TextQuestionStep({
     return () => reset()
   }, [reset, questionNumber])
 
-  const isEnabled = value.trim().length > 3
+  const hasValidText = value.trim().length > 3
+  const hasCompletedAudio = !!recorder.audioBlob && !recorder.isRecording
+  const isEnabled = hasValidText || hasCompletedAudio
 
   const handleMicClick = () => {
     if (!isSupported) {
