@@ -24,8 +24,10 @@ import {
   MessageSquare,
   Download,
   Filter,
+  MicOff,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { AudioPlayer } from '@/components/AudioPlayer'
 
 interface SessionGroup {
   session_id: string
@@ -249,9 +251,17 @@ export default function Results() {
                         <p className="text-brand-tan text-sm font-medium mb-1">
                           {row.question_label}
                         </p>
-                        <p className="text-white/80 text-sm leading-relaxed whitespace-pre-wrap">
+                        <p className="text-white/80 text-sm leading-relaxed whitespace-pre-wrap mb-2">
                           {row.answer_text || '—'}
                         </p>
+                        {row.audio_url ? (
+                          <AudioPlayer src={row.audio_url} />
+                        ) : (
+                          <div className="flex items-center gap-2 text-white/30 text-xs">
+                            <MicOff className="w-3 h-3" />
+                            <span>Sem gravação de áudio</span>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
