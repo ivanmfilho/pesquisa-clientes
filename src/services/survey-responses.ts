@@ -34,7 +34,7 @@ export async function uploadAudioRecording(
   sessionId: string,
   questionKey: string,
   blob: Blob,
-): Promise<string | null> {
+): Promise<{ url: string | null; error: string | null }> {
   const ext = blob.type.includes('webm') ? 'webm' : 'ogg'
   const filePath = `${sessionId}/${questionKey}.${ext}`
 
@@ -45,13 +45,12 @@ export async function uploadAudioRecording(
 
   if (error) {
     console.error('Audio upload error:', error.message)
-    return null
+    return { url: null, error: error.message }
   }
 
   const { data } = supabase.storage.from('survey-recordings').getPublicUrl(filePath)
-  return data.publicUrl
+  return { url: data.publicUrl, error: null }
 }
-
 export async function submitSurveyResponses(data: {
   name: string
   q1: string

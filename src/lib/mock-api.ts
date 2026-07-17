@@ -17,14 +17,22 @@ export interface SurveyResponse {
   audioBlobs?: Record<string, Blob>
 }
 
-export async function submitSurveyToDatabase(data: SurveyResponse): Promise<{ success: boolean }> {
+export async function submitSurveyToDatabase(
+  data: SurveyResponse,
+): Promise<{ success: boolean; error?: string }> {
   const sessionId = crypto.randomUUID()
   const audioUrls: Record<string, string> = {}
 
   if (data.audioBlobs) {
     for (const [key, blob] of Object.entries(data.audioBlobs)) {
-      const url = await uploadAudioRecording(sessionId, key, blob)
-      if (url) audioUrls[key] = url
+      const { url, error } = await uploadAudioRecording(sessionId, key, blob)
+      if (error || !url) {
+        return {
+          success: false,
+          error: 'Falha ao enviar o áudio. Por favor, tente novamente.',
+        }
+      }
+      audioUrls[key] = url
     }
   }
 
@@ -45,7 +53,14 @@ export async function submitSurveyToDatabase(data: SurveyResponse): Promise<{ su
     audioUrls,
   })
 
-  if (result.success && result.sessionId) {
+  if (!result.success) {
+    return {
+      success: false,
+      error: result.error || 'Falha ao salvar as respostas. Por favor, tente novamente.',
+    }
+  }
+
+  if (result.sessionId) {
     try {
       await supabase.functions.invoke('notify-survey-response', {
         body: {
@@ -59,5 +74,5 @@ export async function submitSurveyToDatabase(data: SurveyResponse): Promise<{ su
     }
   }
 
-  return { success: result.success }
+  return { success: true }
 }

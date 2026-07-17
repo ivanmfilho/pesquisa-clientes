@@ -83,7 +83,12 @@ export default function Index() {
         completedAt: new Date().toISOString(),
         audioBlobs,
       }
-      await submitSurveyToDatabase(finalData)
+      const result = await submitSurveyToDatabase(finalData)
+      if (!result.success) {
+        toast.error(result.error || 'Ocorreu um erro ao salvar suas respostas. Tente novamente.')
+        return
+      }
+      toast.success('Respostas enviadas com sucesso!')
       setDirection('forward')
       setStep(totalSteps + 1)
     } catch (error) {
